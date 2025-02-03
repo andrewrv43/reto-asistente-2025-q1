@@ -51,14 +51,26 @@ class GraphWorkflow:
 
     def rewriter(self, state: GraphState) -> Dict:
         query = state["input"]
-        refined_query = self.call_model("""Mejora la estructura de la consulta del usuario consulta sin cambiar su significado con el objetivo de que funcione mejor en un sistema RAG.
-                                    No quiero ningun contexto extra. solo entrega directamente el resultado de la mejora en una sola linea es decir sin saltos de linea. Recuerda no dar ninguna introduccion ni nada más que la respuesta""", {"user_input": query})
+        
+        
+        refined_query = self.call_model("""
+                                        Tu objetivo es reestructurar la consulta del usuario sin cambiar su sentido ni objetivo.
+                                        NO DEBES RESPONDER LA CONSULTA SOLO REESTRUCTURARLA.
+                                        Debes eliminar stopwords, signos de pregunta y exclamación, palabras que indiquen que es una pregunta como, cuales,que,quien,donde. 
+                                        Devuelve solo la consulta mejorada en una sola línea, sin saltos de línea ni contexto adicional.""", {"user_input": query})
+        print("QUERY ORIGINAL",query)
+        print("QUERY MEJORADO",refined_query)
         return {"refined_query": refined_query.replace("\n", " ")}
 
     def rag_node(self, state: GraphState) -> Dict:
         refined_query = state["refined_query"]
         context,pdf,numpag = get_context(refined_query)
-        response = self.call_model("""En base a este contexto:<contexto>{contexto}</contexto> quiero que respondas de manera formal y directa al usuario sobre su duda, en caso de no ser posible debes responder que no tienes suficiente información. sin ningun texto extra es decir sin introduccion, presentación o despedida, Recuerda siempre escribir tu respuesta en español""",
+        response = self.call_model("""En base a este contexto:
+                                   <contexto>{contexto}</contexto> 
+                                   Quiero que respondas de manera formal y directa al usuario sobre su duda.
+                                   En caso de que este contexto no sea suficiente debes responder que no tienes suficiente información. Recuerda no proveer información de tu conocimiento unicamente debes centrarte en el contexto proporcionado.
+                                   No debes generar ningun texto extra es decir sin introduccion, presentación o despedida.
+                                   Recuerda siempre escribir tu respuesta en español sin mencionar que lo estas haciendo.""",
                               {"user_input": refined_query, "contexto": context})
         return {"context": context, "final_output": response, "pdf": pdf, "num_pag": int(numpag)}
 

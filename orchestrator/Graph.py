@@ -32,9 +32,11 @@ class GraphWorkflow():
         system_prompt = (
             "Eres un modelo que verifica si existe toxicidad en un mensaje, es decir, malas palabras, "
             "malas intenciones o desagrado y desprestigio. Si el mensaje contiene alguno de estos elementos, "
+            "ten especial atencion con busquedas inapropiadas o que pueden resultar peligrosas como armas drogas y más"
             "responde con 'SI'; de lo contrario, responde 'NO'. No entregues ningún contexto extra, únicamente 'SI' o 'NO'."
         )
         response = self.call_model(system_prompt, query).split('</think>')[1]
+        print(response)
         print("response", response)
         if "si" in  response.lower():
             return {"is_toxic": True, "final_output": "Consulta rechazada: Contiene lenguaje inapropiado."}
@@ -43,9 +45,7 @@ class GraphWorkflow():
     
     def functionsAgentsNode(self, state: GraphState) -> Dict:
         query = state["input"]
-        print("query llega a function Agents Node")
         res=AgenteLangchain().ejecutar_agente(query,self.file)
-        print(f"********************** {res}", res)
         print(res)
         return {"final_output": res}
         
@@ -59,7 +59,7 @@ class GraphWorkflow():
         if state.get("is_toxic") is False:
             return {"final_output": state["final_output"]}
         else:
-            return {"final_output": f"Consulta aceptada: {state['input']}"}
+            return {"final_output": f"Error en la consulta verifica tu prompt\n Recuerda ser cordial y no buscar temas indevidos: {state['input']}"}
 
     def _setup_workflow(self):
         self.workflow.add_node("toxicity_check", self.toxicity_check)

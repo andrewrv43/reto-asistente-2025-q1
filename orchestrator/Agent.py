@@ -6,14 +6,41 @@ class AgenteLangchain:
     def __init__(self):
         self.llm = ChatOllama(model="deepseek-r1:8b", base_url="http://host.docker.internal:11434")
         self.chat_prompt = ChatPromptTemplate.from_messages([
-            ("system", """Debes elegir una de las siguientes herramientas según la consulta del usuario: "
-                       Herramienta: 'query' Descripcion: para preguntas generales, dudas sobre temas bancarios o cualquier duda en general, donde el usuario quiera aprender o saber algo y 
-                       Herramienta: 'consulta_producto' Descripcion: El usuario describe o menciona el nombre de uno o varios productos. 
-                       Devuelve solo el nombre de la herramientaque usarías sin texto adicional."""),
+            ("system", """Debes elegir una de las siguientes herramientas según la consulta del usuario. Analiza la consulta y selecciona la herramienta más adecuada en función de su contenido:
+
+- Herramienta: 'query'  
+  - Descripción: Para preguntas generales o dudas sobre temas bancarios, financieros o consultas en las que el usuario quiera aprender algo.  
+  - Ejemplos de consultas para 'query':  
+    - ¿Qué es la Superintendencia de Bancos?  
+    - ¿Cuánto capital tengo en mi tarjeta?  
+    - ¿Cómo funcionan las cuentas de ahorro?  
+    - ¿Qué hacer si me hacen un débito indebido?  
+    - ¿Qué es un índice financiero y para qué sirve?  
+    - ¿Cómo se calculan los intereses de un préstamo?  
+    - ¿Cuál es la diferencia entre una tarjeta de débito y crédito?  
+    - Explicación sobre inversiones en bonos.  
+
+- Herramienta: 'consulta_producto'  
+  - Descripción: Para consultas en las que el usuario menciona un producto específico o desea buscar información sobre bienes o artículos.  
+  - Ejemplos de consultas para 'consulta_producto':  
+    - ROLEX, CASIO, SEIKO (Marcas de relojes).  
+    - TARJETAS MADRE, PROCESADORES, LAPTOPS (Componentes y dispositivos electrónicos).  
+    - QUIERO BUSCAR SOBRE FLORES, ZAPATOS, ROPA (Artículos de consumo).  
+    - QUIERO PRECIOS DE ZAPATOS.  
+    - BUSCO UN CELULAR NUEVO.  
+    - ¿DÓNDE PUEDO COMPRAR UNA CASA?  
+    - LISTADO DE VEHÍCULOS DISPONIBLES PARA COMPRA.  
+    - QUIERO UNA BICICLETA PARA MONTAÑA.  
+    - COMPARACIÓN ENTRE IPHONE Y SAMSUNG.  
+
+Reglas:  
+1. La elección no depende del uso de mayúsculas o minúsculas.  
+2. Si la consulta es ambigua, elige 'query'.  
+3. Devuelve solo el nombre de la herramienta que usarías, sin texto adicional."""),
             ("user", "{consulta}")
         ])
     def general_query(self, query: str):
-        response = requests.get("http://flask-assistant:5000/assistant/rag", params={"query": query})
+        response = requests.post("http://flask-assistant:5000/assistant/rag", json={"query": query})
         return response.json() if response.status_code == 200 else "Error en la consulta."
     def process_file(self,consulta, file):
             files = {'file': (file.filename, file.stream, file.content_type)}
@@ -22,7 +49,7 @@ class AgenteLangchain:
             
             return response.json() if response.status_code == 200 else "Error al procesar el archivo."
     def product_query(self, product_name: str):
-        response = requests.get("http://flask-assistant:5000/assistant/shopping-advisor", params={"product_name": product_name})
+        response = requests.post("http://flask-assistant:5000/assistant/shopping-advisor", json={"query": product_name})
         return response.json() if response.status_code == 200 else "Producto no encontrado."
     def ejecutar_agente(self, consulta,file=None,i=0):
         messages = self.chat_prompt.format_messages(consulta=consulta)
@@ -34,6 +61,4 @@ class AgenteLangchain:
         elif  "consulta_producto" in tool_choice:
             return self.product_query(consulta)
         else:
-            if i==3:
-                return "No se pudo determinar la herramienta adecuada para la consulta."
-            return self.ejecutar_agente(consulta, file,i+1)
+            return "No se pudo determinar la herramienta adecuada para la consulta."
