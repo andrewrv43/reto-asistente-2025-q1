@@ -18,8 +18,7 @@ def orchestrate():
         
     query = request.form.get('query','NO EXISTE PREGUNTA NI NADA') 
     res1=GraphWorkflow(file=file).invoke({'input':query})
-    print(f"#################RESPONSE: {res1}",type(res1))
-            
+           
     if  res1:
         response = {
             "query": query,
