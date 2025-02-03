@@ -1,0 +1,269 @@
+{
+	"info": {
+		"_postman_id": "436e9c2c-c08d-4ceb-a5bd-aaf0ad09a5b5",
+		"name": "PRUEBA IA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27757748"
+	},
+	"item": [
+		{
+			"name": "USO DE BASE",
+			"item": [
+				{
+					"name": "CREACION DE ESQUEMAS",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"class\": \"Libro\",\r\n  \"description\": \"Una colección de libros con información relevante\",\r\n  \"vectorizer\": \"text2vec-transformers\",\r\n  \"properties\": [\r\n    {\r\n      \"name\": \"titulo\",\r\n      \"description\": \"El título del libro\",\r\n      \"dataType\": [\"text\"]\r\n    },\r\n    {\r\n      \"name\": \"autor\",\r\n      \"description\": \"El autor del libro\",\r\n      \"dataType\": [\"text\"]\r\n    },\r\n    {\r\n      \"name\": \"anioPublicacion\",\r\n      \"description\": \"El año en que fue publicado\",\r\n      \"dataType\": [\"int\"]\r\n    },\r\n    {\r\n      \"name\": \"embedding\",\r\n      \"description\": \"Vector de representación del libro\",\r\n      \"dataType\": [\"number[]\"]\r\n    }\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/schema",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"schema"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "insersion a base",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"objects\": [\r\n    {\r\n      \"class\": \"Libro\",\r\n      \"properties\": {\r\n        \"titulo\": \"Moby Dick\",\r\n        \"autor\": \"Herman Melville\",\r\n        \"anioPublicacion\": 1851\r\n      }\r\n    },\r\n    {\r\n      \"class\": \"Libro\",\r\n      \"properties\": {\r\n        \"titulo\": \"1984\",\r\n        \"autor\": \"George Orwell\",\r\n        \"anioPublicacion\": 1949\r\n      }\r\n    },\r\n    {\r\n      \"class\": \"Libro\",\r\n      \"properties\": {\r\n        \"titulo\": \"Cien años de soledad\",\r\n        \"autor\": \"Gabriel García Márquez\",\r\n        \"anioPublicacion\": 1967\r\n      }\r\n    },\r\n    {\r\n      \"class\": \"Libro\",\r\n      \"properties\": {\r\n        \"titulo\": \"El Principito\",\r\n        \"autor\": \"Antoine de Saint-Exupéry\",\r\n        \"anioPublicacion\": 1943\r\n      }\r\n    }\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/batch/objects",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"batch",
+								"objects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "consultas semánticas",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"query\": \"{ Get { Libro(nearText: { concepts: [\\\"Antoine de Saint-Exupéry\\\"] }) { titulo autor _additional {distance} } } }\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/v1/graphql",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ASSISTANT",
+			"item": [
+				{
+					"name": "UPDATE RAG",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"batch_size\": 50,\r\n  \"overlap\": 0,\r\n  \"max_chunk_size\": 600\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/assistant/update-rag",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"assistant",
+								"update-rag"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RAG",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"query\":\"¿como ahorro dinero?\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/assistant/rag",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"assistant",
+								"rag"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "send documents",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/paulr/Downloads/a5.pdf"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5001/assistant/analyze-pdf",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"assistant",
+								"analyze-pdf"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "shopping advisor",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"query\":\"RELOJES ROLEX\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/assistant/shopping-advisor",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"assistant",
+								"shopping-advisor"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "test Orchestrator",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"contentType": "application/json",
+							"type": "file",
+							"src": "/C:/Users/paulr/Downloads/a5.pdf",
+							"disabled": true
+						},
+						{
+							"key": "query",
+							"value": "que es el Consumer Financial Protection Bureau",
+							"contentType": "application/json",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:5002/orchestrator",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5002",
+					"path": [
+						"orchestrator"
+					],
+					"query": [
+						{
+							"key": "file",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
