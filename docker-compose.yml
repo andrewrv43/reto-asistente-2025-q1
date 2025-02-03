@@ -35,5 +35,18 @@ services:
     depends_on:
       - weaviate
   
+  orchestate-service:
+    build:
+      context: ./orchestrator
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5001"
+    volumes:
+      - ./orchestrator:/app
+    environment:
+      FLASK_ENV: development
+      PYTHONUNBUFFERED: 1 
+    depends_on:
+      - flask-assistant
 volumes:
   weaviate_data:
