@@ -25,7 +25,7 @@ class Researcher:
         self.user_input = user_input
     def search(self):
         search = SerpAPIWrapper(params={"gl": "ec", "hl": "es", "num": "11"})
-        respuesta = search.results(f"{self.user_input} PRECIOS MÁS ECONÓMICOS")
+        respuesta = search.results(f"{self.user_input} PRECIOS MÁS ECONÓMICOS EN ECUADOR")
         respuesta = [
             {k: v for k, v in x.items() if k not in ["redirect_link", "displayed_link", "favicon","position"]}
             for x in respuesta["organic_results"]

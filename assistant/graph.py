@@ -28,7 +28,9 @@ class GraphWorkflow:
             ("user", "{user_input}")
         ])
         chain = prompt | self.llm | output_parser
-        return chain.invoke(dictionary).split("</think>")[1].strip()
+        res = chain.invoke(dictionary)
+        res = res.split("</think>")[1].strip() if "</think>" in res else res.strip()
+        return res
 
     def guardrail(self, state: GraphState) -> Dict:
         query = state["input"]
@@ -54,10 +56,33 @@ class GraphWorkflow:
         
         
         refined_query = self.call_model("""
-                                        Tu objetivo es reestructurar la consulta del usuario sin cambiar su sentido ni objetivo.
-                                        NO DEBES RESPONDER LA CONSULTA SOLO REESTRUCTURARLA.
-                                        Debes eliminar stopwords, signos de pregunta y exclamación, palabras que indiquen que es una pregunta como, cuales,que,quien,donde. 
-                                        Devuelve solo la consulta mejorada en una sola línea, sin saltos de línea ni contexto adicional.""", {"user_input": query})
+Instrucción:
+
+Reestructura la consulta del usuario manteniendo su significado original. No respondas a la consulta; solo reescríbela. Elimina palabras vacías (stopwords), signos de interrogación y exclamación, y palabras que indican que es una pregunta (por ejemplo: "cuáles", "qué", "quién", "dónde"). Devuelve únicamente la consulta reformulada en una sola línea, sin saltos de línea ni contexto adicional.
+
+Ejemplos:
+
+Consulta original: ¿Qué es la Superintendencia de Bancos?
+
+Consulta reestructurada: Superintendencia Bancos
+Consulta original: ¿Cómo funcionan las cuentas de ahorro?
+
+Consulta reestructurada: Funcionamiento cuentas ahorro
+Consulta original: ¿Qué hacer si me hacen un débito indebido?
+
+Consulta reestructurada: Acciones ante débito indebido
+Consulta original: ¿Cuál es la diferencia entre una tarjeta de débito y crédito?
+
+Consulta reestructurada: Diferencia tarjeta débito crédito
+Consulta original: ¿Dónde puedo encontrar información sobre inversiones en bonos?
+
+Consulta reestructurada: Información inversiones bonos
+Reglas:
+
+No cambies el sentido ni el objetivo de la consulta original.
+No respondas a la consulta; solo reescríbela según las indicaciones.
+Devuelve la consulta reformulada en una sola línea, sin saltos de línea ni contexto adicional.
+                                        """, {"user_input": query})
         print("QUERY ORIGINAL",query)
         print("QUERY MEJORADO",refined_query)
         return {"refined_query": refined_query.replace("\n", " ")}
@@ -65,6 +90,7 @@ class GraphWorkflow:
     def rag_node(self, state: GraphState) -> Dict:
         refined_query = state["refined_query"]
         context,pdf,numpag = get_context(refined_query)
+        print("##########################\nCONTEXT\n##########################", context)
         response = self.call_model("""En base a este contexto:
                                    <contexto>{contexto}</contexto> 
                                    Quiero que respondas de manera formal y directa al usuario sobre su duda.
@@ -114,6 +140,7 @@ class GraphWorkflow:
         self.app = self.workflow.compile()
 
     def invoke(self, query: Dict) -> str:
+        print("QUERY", query)
         response = self.app.invoke(query)
         return response.get("final_output", "Error: No se generó respuesta.")
 
