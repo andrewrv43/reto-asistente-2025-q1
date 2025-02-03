@@ -48,5 +48,20 @@ services:
       PYTHONUNBUFFERED: 1 
     depends_on:
       - flask-assistant
+  
+  stream-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./frontend:/app
+    environment:
+      FLASK_ENV: development
+      PYTHONUNBUFFERED: 1 
+    depends_on:
+      - orchestate-service
+
 volumes:
   weaviate_data:

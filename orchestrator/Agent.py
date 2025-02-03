@@ -6,37 +6,34 @@ class AgenteLangchain:
     def __init__(self):
         self.llm = ChatOllama(model="deepseek-r1:8b", base_url="http://host.docker.internal:11434")
         self.chat_prompt = ChatPromptTemplate.from_messages([
-            ("system", """Debes elegir una de las siguientes herramientas según la consulta del usuario. Analiza la consulta y selecciona la herramienta más adecuada en función de su contenido:
+            ("system", """
 
-- Herramienta: 'query'  
-  - Descripción: Para preguntas generales o dudas sobre temas bancarios, financieros o consultas en las que el usuario quiera aprender algo.  
-  - Ejemplos de consultas para 'query':  
-    - ¿Qué es la Superintendencia de Bancos?  
-    - ¿Cuánto capital tengo en mi tarjeta?  
-    - ¿Cómo funcionan las cuentas de ahorro?  
-    - ¿Qué hacer si me hacen un débito indebido?  
-    - ¿Qué es un índice financiero y para qué sirve?  
-    - ¿Cómo se calculan los intereses de un préstamo?  
-    - ¿Cuál es la diferencia entre una tarjeta de débito y crédito?  
-    - Explicación sobre inversiones en bonos.  
+Instrucción:
 
-- Herramienta: 'consulta_producto'  
-  - Descripción: Para consultas en las que el usuario menciona un producto específico o desea buscar información sobre bienes o artículos.  
-  - Ejemplos de consultas para 'consulta_producto':  
-    - ROLEX, CASIO, SEIKO (Marcas de relojes).  
-    - TARJETAS MADRE, PROCESADORES, LAPTOPS (Componentes y dispositivos electrónicos).  
-    - QUIERO BUSCAR SOBRE FLORES, ZAPATOS, ROPA (Artículos de consumo).  
-    - QUIERO PRECIOS DE ZAPATOS.  
-    - BUSCO UN CELULAR NUEVO.  
-    - ¿DÓNDE PUEDO COMPRAR UNA CASA?  
-    - LISTADO DE VEHÍCULOS DISPONIBLES PARA COMPRA.  
-    - QUIERO UNA BICICLETA PARA MONTAÑA.  
-    - COMPARACIÓN ENTRE IPHONE Y SAMSUNG.  
+Analiza la consulta del usuario y selecciona la herramienta más adecuada según su contenido:
 
-Reglas:  
-1. La elección no depende del uso de mayúsculas o minúsculas.  
-2. Si la consulta es ambigua, elige 'query'.  
-3. Devuelve solo el nombre de la herramienta que usarías, sin texto adicional."""),
+'query': Para preguntas generales o dudas sobre temas bancarios y financieros.
+
+Ejemplos:
+¿Qué es la Superintendencia de Bancos?
+¿Cómo funcionan las cuentas de ahorro?
+¿Qué es un índice financiero y para qué sirve?
+
+
+'consulta_producto': Para consultas que mencionan un producto específico o buscan información sobre bienes o artículos, incluyendo precios o referencias a productos económicos o costosos.
+
+Ejemplos:
+Marcas de relojes: ROLEX, CASIO, SEIKO.
+Componentes electrónicos: TARJETAS MADRE, PROCESADORES, LAPTOPS.
+Artículos de consumo: flores, zapatos, ropa.
+Consultas de precios: "Quiero precios de zapatos".
+Búsqueda de productos: "Busco un celular nuevo".
+Reglas:
+
+La elección no depende del uso de mayúsculas o minúsculas.
+Devuelve solo el nombre de la herramienta seleccionada, sin texto adicional.
+
+"""),
             ("user", "{consulta}")
         ])
     def general_query(self, query: str):
@@ -54,6 +51,7 @@ Reglas:
     def ejecutar_agente(self, consulta,file=None,i=0):
         messages = self.chat_prompt.format_messages(consulta=consulta)
         tool_choice = self.llm.invoke(messages).content.strip().lower()
+        print("#############",tool_choice)
         if  file is not None:
             return self.process_file(consulta,file)
         elif  "query" in tool_choice:
