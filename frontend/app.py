@@ -4,7 +4,7 @@ import requests
 # URL del servicio Flask
 API_URL = "http://orchestate-service:5001/orchestrator"
 
-st.title("💬 ChatGPT en Streamlit con Archivos y Markdown")
+st.title("💬 Streamlit")
 
 # Inicializar historial de mensajes
 if "messages" not in st.session_state:

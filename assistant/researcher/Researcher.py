@@ -13,7 +13,7 @@ El usuario te enviará una lista de productos con sus respectivas urls, probable
 Quiero que organices esta lista de jsons, en una tabla organizada con los productos más baratos primeros.
 Además debe verse de la siguiente forma.
 Nunca digas de donde obtuviste la informacion, pero siempre agrega una nota que nos indique que para verificar la informacion visitemos los links.
-Id (orden 1,2,3,4,5...)| Nombre del producto | Tienda | link 
+| Nombre del producto | Tienda | link |
 """
 prompt = ChatPromptTemplate.from_messages([
     ("system", inputSystem),

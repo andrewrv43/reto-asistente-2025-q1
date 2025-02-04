@@ -53,30 +53,23 @@ class GraphWorkflow:
 
     def rewriter(self, state: GraphState) -> Dict:
         query = state["input"]
-        
-        
         refined_query = self.call_model("""
 Instrucción:
 
-Reestructura la consulta del usuario manteniendo su significado original. No respondas a la consulta; solo reescríbela. Elimina palabras vacías (stopwords), signos de interrogación y exclamación, y palabras que indican que es una pregunta (por ejemplo: "cuáles", "qué", "quién", "dónde"). Devuelve únicamente la consulta reformulada en una sola línea, sin saltos de línea ni contexto adicional.
+Reestructura la consulta del usuario manteniendo su significado original.
+No respondas a la consulta; solo reescríbela.
+Elimina signos de interrogación, exclamación, y puntuacion.
+Devuelve únicamente la consulta reformulada en una sola línea, sin saltos de línea ni contexto adicional.
 
 Ejemplos:
 
 Consulta original: ¿Qué es la Superintendencia de Bancos?
 
-Consulta reestructurada: Superintendencia Bancos
+Consulta reestructurada: la Superintendencia de Bancos es
 Consulta original: ¿Cómo funcionan las cuentas de ahorro?
 
-Consulta reestructurada: Funcionamiento cuentas ahorro
-Consulta original: ¿Qué hacer si me hacen un débito indebido?
+Consulta reestructurada: Funcionamiento de las cuentas ahorro
 
-Consulta reestructurada: Acciones ante débito indebido
-Consulta original: ¿Cuál es la diferencia entre una tarjeta de débito y crédito?
-
-Consulta reestructurada: Diferencia tarjeta débito crédito
-Consulta original: ¿Dónde puedo encontrar información sobre inversiones en bonos?
-
-Consulta reestructurada: Información inversiones bonos
 Reglas:
 
 No cambies el sentido ni el objetivo de la consulta original.
@@ -92,11 +85,11 @@ Devuelve la consulta reformulada en una sola línea, sin saltos de línea ni con
         context,pdf,numpag = get_context(refined_query)
         print("##########################\nCONTEXT\n##########################", context)
         response = self.call_model("""En base a este contexto:
-                                   <contexto>{contexto}</contexto> 
-                                   Quiero que respondas de manera formal y directa al usuario sobre su duda.
-                                   En caso de que este contexto no sea suficiente debes responder que no tienes suficiente información. Recuerda no proveer información de tu conocimiento unicamente debes centrarte en el contexto proporcionado.
-                                   No debes generar ningun texto extra es decir sin introduccion, presentación o despedida.
-                                   Recuerda siempre escribir tu respuesta en español sin mencionar que lo estas haciendo.""",
+<contexto>{contexto}</contexto> 
+Quiero que respondas de manera formal y directa al usuario sobre su duda.
+En caso de que este contexto no sea suficiente debes responder que no tienes suficiente información. Recuerda no proveer información de tu conocimiento unicamente debes centrarte en el contexto proporcionado.
+No debes generar ningun texto extra es decir sin introduccion, presentación o despedida.
+Recuerda siempre escribir tu respuesta en español sin mencionar que lo estas haciendo.""",
                               {"user_input": refined_query, "contexto": context})
         return {"context": context, "final_output": response, "pdf": pdf, "num_pag": int(numpag)}
 
