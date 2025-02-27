@@ -1,0 +1,48 @@
+
+🎯 **Resumen de Datos**
+- 📉 **Gastos principales:** 
+
+
+|    | DESCRIPCION                              |   DEBITO |
+|---:|:-----------------------------------------|---------:|
+| 19 | RETIRO ATM BP   JARDIN 3              QU |   200    |
+| 22 | TRANSFERENCIA INTERNET                   |   182.17 |
+| 21 | TRANSFERENCIA INTERBANCARIA ENVIADA      |   116.49 |
+| 20 | RETIRO ATM BP   U.SALESIANA SUR       QU |    30    |
+| 18 | PAGO MTRQ TRF   5F2F01A7-D2C4-4748-B     |    17    |
+
+
+- 💰 **Ingresos principales:** 
+
+
+|    | DESCRIPCION                              |   CREDITO |
+|---:|:-----------------------------------------|----------:|
+|  7 | 07551336-BANCO PICHINCHA-RB-000000000000 |    778.42 |
+| 22 | TRANSFERENCIA INTERNET                   |    210    |
+|  8 | 07808210-REG RECLAMOS-T3-066166416       |      0.85 |
+|  4 | 07247622-REG RECLAMOS-T3-080149928       |      0.32 |
+|  9 | 07961788-REG RECLAMOS-T3-070881227       |      0.17 |
+
+
+- 👀 **Visitas destacadas:** 
+
+
+|    | DESCRIPCION                              |   NUM VISITAS |
+|---:|:-----------------------------------------|--------------:|
+| 22 | TRANSFERENCIA INTERNET                   |            15 |
+| 18 | PAGO MTRQ TRF   5F2F01A7-D2C4-4748-B     |             4 |
+| 21 | TRANSFERENCIA INTERBANCARIA ENVIADA      |             4 |
+| 20 | RETIRO ATM BP   U.SALESIANA SUR       QU |             2 |
+|  0 | ****RETENCION IVASD      APPLE.COM       |             1 |
+
+
+- 📄 **Resumen:** `
+
+**Resumen de gastos e ingresos:**
+
+- **Gastos totales:** $200 + $182.17 + $116.49 + $30 + $17 = **$445.66**
+  
+- **Ingresos totales:** $778.42 + $210 + $0.85 + $0.32 = **$989.49**
+
+**Recomendación:**
+Con un gasto mensual regular, es recomendable ahorrar parte de los ingresos o invertir en acciones o bienes de valor duradero para lograr una mayor rentabilidad.`

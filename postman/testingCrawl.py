@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 async def main():
     async with AsyncWebCrawler() as crawler:
         result = await crawler.arun(
-            url="https://www.tipti.market/tienda/kywi/hogar/pilas-alcalinas",
+            url="https://aws.amazon.com/es/bedrock/pricing",
         )
         print(result.markdown)
 
@@ -57,7 +57,7 @@ class InternetSearch():
 
     def __init__(self, num_results=3):
         self.num_results = num_results
-        self.search = GoogleSearchAPIWrapper(google_api_key=self.google_api_key, google_cse_id=self.google_cse_id)
+        #self.search = GoogleSearchAPIWrapper(google_api_key=self.google_api_key, google_cse_id=self.google_cse_id)
 
     def searchUrls(self, query: str):
         try:
@@ -71,16 +71,16 @@ class InternetSearch():
 
     async def getWebMarkDown(self, query: str):
         crw = Crawler()
-        urls = self.searchUrls(query)  # Obtener lista de URLs
-        if not urls:
-            return "No se encontraron resultados."
+        # urls = self.searchUrls(query)  # Obtener lista de URLs
+        # if not urls:
+        #     return "No se encontraron resultados."
 
-        text = await crw.crawl_sequential(urls)  # Llamar correctamente la función asíncrona
+        text = await crw.crawl_sequential(query)  # Llamar correctamente la función asíncrona
         return text
 
 async def main_async():
     search = InternetSearch()
-    txt = await search.getWebMarkDown("Lavaplatos en oferta")  # Ejecutar la búsqueda y el crawling
+    txt = await search.getWebMarkDown("https://aws.amazon.com/es/bedrock/pricing")  # Ejecutar la búsqueda y el crawling
 
     # Guardar el resultado en un archivo txt
     with open("output.txt", "w", encoding="utf-8") as file:
